@@ -216,7 +216,7 @@ class _MapButton extends StatelessWidget {
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: EdgeInsets.symmetric(horizontal: 16 + (isSelected ? 32 : 0), vertical: 10),
         child: Text(
           text,
           style: TextStyle(
@@ -224,7 +224,7 @@ class _MapButton extends StatelessWidget {
             fontSize: 12,
             fontWeight: FontWeight.w400,
             color: isSelected ? Colors.black : Colors.white,
-            height: 14 / 12,
+            height: 1.5,
           ),
         ),
       ),
