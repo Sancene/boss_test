@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:untitled/form/bloc/form_bloc.dart';
+import 'package:untitled/form/widget/fullscreen_loader.dart';
 import 'package:untitled/gen/assets.gen.dart';
 import 'package:untitled/utils/colors.dart';
 import 'package:untitled/utils/theme_data.dart';
@@ -69,254 +70,347 @@ class _FormPageState extends State<FormPage> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        body: SafeArea(
-          child: Column(
-            children: [
-              Assets.images.logo.image(height: 64, width: 176),
-              const SizedBox(height: 14),
-              ColoredBox(
-                color: AppColors.primaryRed,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      icon: const Icon(
-                        Icons.keyboard_backspace_sharp,
-                        color: Colors.white,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 14, 14, 14),
-                      child: Text(
-                        'Add New Ship From Address',
-                        style: Theme.of(context).h16.copyWith(color: Colors.white),
-                      ),
-                    ),
-                  ],
+      child: BlocListener<FormBloc, BossFormState>(
+        listener: (context, state) {
+          state.mapOrNull(
+            submitting: (value) => showFullScreenLoader(context),
+            success: (value) {
+              Navigator.of(context).pop();
+              Navigator.of(context).maybePop();
+            },
+            failure: (value) {
+              Navigator.of(context).maybePop();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Submition error'),
                 ),
-              ),
-              Expanded(
-                child: ListView(
-                  shrinkWrap: true,
-                  children: [
-                    const SizedBox(height: 29),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 28),
-                      child: RichText(
-                        text: const TextSpan(
-                          text: '*',
-                          children: [
-                            TextSpan(
-                              text: ' — Fields obligatory for filling',
-                              style: TextStyle(
-                                fontFamily: "Arial",
-                                fontSize: 18,
-                                fontWeight: FontWeight.w400,
-                                height: 1,
-                                color: Colors.black,
+              );
+            },
+          );
+        },
+        child: Scaffold(
+          body: SafeArea(
+            child: Column(
+              children: [
+                Assets.images.logo.image(height: 64, width: 176),
+                const SizedBox(height: 14),
+                ColoredBox(
+                  color: AppColors.primaryRed,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        icon: const Icon(
+                          Icons.keyboard_backspace_sharp,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 14, 14, 14),
+                        child: Text(
+                          'Add New Ship From Address',
+                          style: Theme.of(context).h16.copyWith(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: [
+                      const SizedBox(height: 29),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 28),
+                        child: RichText(
+                          text: const TextSpan(
+                            text: '*',
+                            children: [
+                              TextSpan(
+                                text: ' — Fields obligatory for filling',
+                                style: TextStyle(
+                                  fontFamily: "Arial",
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w400,
+                                  height: 1,
+                                  color: Colors.black,
+                                ),
                               ),
+                            ],
+                            style: TextStyle(
+                              fontFamily: "Arial",
+                              fontSize: 18,
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.primaryRed,
+                              height: 1,
                             ),
-                          ],
-                          style: TextStyle(
-                            fontFamily: "Arial",
-                            fontSize: 18,
-                            fontWeight: FontWeight.w400,
-                            color: AppColors.primaryRed,
-                            height: 1,
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 24),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 28),
-                      child: TextFieldWithTitle(
-                        text: 'Address Name',
-                        controller: _addressNameController,
-                        isRequired: true,
-                        onChange: (value) => setState(() {}),
-                        textInputAction: TextInputAction.next,
-                        haveError: _addressNameController.text.isNotEmpty && !addressNameValid,
-                        errorMessage: 'Text is too short',
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 28),
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: AppColors.borderColorMain),
+                      const SizedBox(height: 24),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 28),
+                        child: TextFieldWithTitle(
+                          text: 'Address Name',
+                          controller: _addressNameController,
+                          isRequired: true,
+                          onChange: (value) => setState(() {}),
+                          textInputAction: TextInputAction.next,
+                          haveError: _addressNameController.text.isNotEmpty && !addressNameValid,
+                          errorMessage: 'Text is too short',
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(14),
-                          child: Column(
-                            children: [
-                              TextFieldWithTitle(
-                                text: 'First Name',
-                                controller: _firstNameController,
-                                isRequired: true,
-                                onChange: (value) => setState(() {}),
-                                textInputAction: TextInputAction.next,
-                                haveError: _firstNameController.text.isNotEmpty && !firstNameValid,
-                                errorMessage: 'Text is too short',
-                              ),
-                              const SizedBox(height: 14),
-                              TextFieldWithTitle(
-                                text: 'Last Name',
-                                controller: _lastNameController,
-                                isRequired: true,
-                                onChange: (value) => setState(() {}),
-                                textInputAction: TextInputAction.next,
-                                haveError: _lastNameController.text.isNotEmpty && !lastNameValid,
-                                errorMessage: 'Text is too short',
-                              ),
-                              const SizedBox(height: 14),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      height: 1,
-                                      color: AppColors.borderColorMain,
+                      ),
+                      const SizedBox(height: 14),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 28),
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: AppColors.borderColorMain),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(14),
+                            child: Column(
+                              children: [
+                                TextFieldWithTitle(
+                                  text: 'First Name',
+                                  controller: _firstNameController,
+                                  isRequired: true,
+                                  onChange: (value) => setState(() {}),
+                                  textInputAction: TextInputAction.next,
+                                  haveError: _firstNameController.text.isNotEmpty && !firstNameValid,
+                                  errorMessage: 'Text is too short',
+                                ),
+                                const SizedBox(height: 14),
+                                TextFieldWithTitle(
+                                  text: 'Last Name',
+                                  controller: _lastNameController,
+                                  isRequired: true,
+                                  onChange: (value) => setState(() {}),
+                                  textInputAction: TextInputAction.next,
+                                  haveError: _lastNameController.text.isNotEmpty && !lastNameValid,
+                                  errorMessage: 'Text is too short',
+                                ),
+                                const SizedBox(height: 14),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Container(
+                                        height: 1,
+                                        color: AppColors.borderColorMain,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 14),
-                                  const Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 10),
-                                    child: Text(
-                                      'OR',
-                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                                    const SizedBox(height: 14),
+                                    const Padding(
+                                      padding: EdgeInsets.symmetric(horizontal: 10),
+                                      child: Text(
+                                        'OR',
+                                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                                      ),
                                     ),
+                                    const SizedBox(height: 14),
+                                    Expanded(
+                                      child: Container(
+                                        height: 1,
+                                        color: AppColors.borderColorMain,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 14),
+                                TextFieldWithTitle(
+                                  text: 'Company Name',
+                                  controller: _companyNameController,
+                                  isRequired: true,
+                                  onChange: (value) => setState(() {}),
+                                  textInputAction: TextInputAction.next,
+                                  haveError: _companyNameController.text.isNotEmpty && !companyNameValid,
+                                  errorMessage: 'Text is too short',
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      BlocBuilder<FormBloc, BossFormState>(
+                        builder: (context, state) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 28),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                TextFieldWithTitle(
+                                  text: 'Address 1',
+                                  controller: _firstAddressController,
+                                  isRequired: true,
+                                  onChange: (value) =>
+                                      context.read<FormBloc>().add(const FormEvent.firstAddressChanged()),
+                                  textInputAction: TextInputAction.next,
+                                  onEditingComplete: () {
+                                    state.firstAddressValid
+                                        ? FocusScope.of(context).nextFocus()
+                                        : context
+                                            .read<FormBloc>()
+                                            .add(FormEvent.validateFirstAddress(_firstAddressController.text));
+                                  },
+                                  errorMessage: 'Address is invalid',
+                                  haveError: _firstAddressController.text.isNotEmpty &&
+                                      !state.firstAddressProcessing &&
+                                      !state.firstAddressValid,
+                                ),
+                                if (state.firstAddressProcessing)
+                                  const CircularProgressIndicator(
+                                    color: AppColors.primaryRed,
                                   ),
-                                  const SizedBox(height: 14),
-                                  Expanded(
-                                    child: Container(
-                                      height: 1,
-                                      color: AppColors.borderColorMain,
+                                if (state.firstAddressValid) ...[
+                                  const SizedBox(height: 6),
+                                  const Text(
+                                    'Address is Verified',
+                                    style: TextStyle(
+                                      fontFamily: "Arial",
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: Color(0xff32aa1d),
+                                      height: 14 / 14,
                                     ),
                                   ),
                                 ],
-                              ),
-                              const SizedBox(height: 14),
-                              TextFieldWithTitle(
-                                text: 'Company Name',
-                                controller: _companyNameController,
-                                isRequired: true,
-                                onChange: (value) => setState(() {}),
-                                textInputAction: TextInputAction.next,
-                                haveError: _companyNameController.text.isNotEmpty && !companyNameValid,
-                                errorMessage: 'Text is too short',
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 28),
-                      child: BlocBuilder<FormBloc, BossFormState>(
-                        builder: (context, state) {
-                          return TextFieldWithTitle(
-                            text: 'Address 1',
-                            controller: _firstAddressController,
-                            isRequired: true,
-                            textInputAction: TextInputAction.next,
-                            onEditingComplete: () {
-                              context.read<FormBloc>().add(FormEvent.validateAddress(_firstAddressController.text));
-                            },
-                            errorMessage: 'Address is invalid',
-                            haveError: !state.addressValid,
+                              ],
+                            ),
                           );
                         },
                       ),
-                    ),
-                    const SizedBox(height: 14),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 28),
-                      child: TextFieldWithTitle(
-                        text: 'Address 2',
-                        controller: _secondAddressController,
-                        textInputAction: TextInputAction.next,
-                        haveError: _secondAddressController.text.length < 5,
-                        errorMessage: 'Text is too short',
+                      const SizedBox(height: 14),
+                      BlocBuilder<FormBloc, BossFormState>(
+                        builder: (context, state) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 28),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                TextFieldWithTitle(
+                                  text: 'Address 2',
+                                  controller: _secondAddressController,
+                                  isRequired: true,
+                                  textInputAction: TextInputAction.next,
+                                  onChange: (value) =>
+                                      context.read<FormBloc>().add(const FormEvent.secondAddressChanged()),
+                                  onEditingComplete: () {
+                                    state.secondAddressValid
+                                        ? FocusScope.of(context).nextFocus()
+                                        : context
+                                            .read<FormBloc>()
+                                            .add(FormEvent.validateSecondAddress(_secondAddressController.text));
+                                  },
+                                  errorMessage: 'Address is invalid',
+                                  haveError: _secondAddressController.text.isNotEmpty &&
+                                      !state.secondAddressProcessing &&
+                                      !state.secondAddressValid,
+                                ),
+                                if (state.secondAddressProcessing)
+                                  const CircularProgressIndicator(
+                                    color: AppColors.primaryRed,
+                                  ),
+                                if (state.secondAddressValid) ...[
+                                  const SizedBox(height: 6),
+                                  const Text(
+                                    'Address is Verified',
+                                    style: TextStyle(
+                                      fontFamily: "Arial",
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: Color(0xff32aa1d),
+                                      height: 14 / 14,
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          );
+                        },
                       ),
-                    ),
-                    const SizedBox(height: 14),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 28),
-                      child: TextFieldWithTitle(
-                        text: 'Country',
-                        controller: _countryController,
-                        isRequired: true,
-                        onChange: (value) => setState(() {}),
-                        textInputAction: TextInputAction.next,
-                        haveError: _countryController.text.isNotEmpty && !countryValid,
-                        errorMessage: 'Text is too short',
+                      const SizedBox(height: 14),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 28),
+                        child: TextFieldWithTitle(
+                          text: 'Country',
+                          controller: _countryController,
+                          isRequired: true,
+                          onChange: (value) => setState(() {}),
+                          textInputAction: TextInputAction.next,
+                          haveError: _countryController.text.isNotEmpty && !countryValid,
+                          errorMessage: 'Text is too short',
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 14),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 28),
-                      child: CityInfo(
-                        cityController: _cityController,
-                        stateController: _stateController,
-                        zipController: _zipController,
-                        cityValid: cityValid,
-                        zipValid: zipValid,
-                        stateValid: stateValid,
-                        onChange: () => setState(() {}),
+                      const SizedBox(height: 14),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 28),
+                        child: CityInfo(
+                          cityController: _cityController,
+                          stateController: _stateController,
+                          zipController: _zipController,
+                          cityValid: cityValid,
+                          zipValid: zipValid,
+                          stateValid: stateValid,
+                          onChange: () => setState(() {}),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 14),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 28),
-                      child: TextFieldWithTitle(
-                        text: 'Phone',
-                        controller: _phoneController,
-                        isRequired: true,
-                        onChange: (value) => setState(() {}),
-                        textInputAction: TextInputAction.next,
-                        haveError: _phoneController.text.isNotEmpty && !phoneValid,
-                        errorMessage: 'Text is too short',
+                      const SizedBox(height: 14),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 28),
+                        child: TextFieldWithTitle(
+                          text: 'Phone',
+                          controller: _phoneController,
+                          isRequired: true,
+                          onChange: (value) => setState(() {}),
+                          textInputAction: TextInputAction.next,
+                          haveError: _phoneController.text.isNotEmpty && !phoneValid,
+                          errorMessage: 'Text is too short',
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 14),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 28),
-                      child: TextFieldWithTitle(
-                        text: 'Email',
-                        controller: _emailController,
-                        isRequired: true,
-                        onChange: (value) => setState(() {}),
-                        textInputAction: TextInputAction.next,
-                        haveError: _emailController.text.isNotEmpty && !emailValid,
-                        errorMessage: 'Text is too short',
+                      const SizedBox(height: 14),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 28),
+                        child: TextFieldWithTitle(
+                          text: 'Email',
+                          controller: _emailController,
+                          isRequired: true,
+                          onChange: (value) => setState(() {}),
+                          textInputAction: TextInputAction.next,
+                          haveError: _emailController.text.isNotEmpty && !emailValid,
+                          errorMessage: 'Text is too short',
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 48),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 28),
-                      child: CustomTextButton(
-                        onPressed: emailValid &&
-                                countryValid &&
-                                cityValid &&
-                                stateValid &&
-                                zipValid &&
-                                phoneValid &&
-                                emailValid &&
-                                ((firstNameValid && lastNameValid) || companyNameValid)
-                            ? () {}
-                            : null,
-                        text: 'Create address',
+                      const SizedBox(height: 48),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 28),
+                        child: BlocBuilder<FormBloc, BossFormState>(
+                          builder: (context, state) {
+                            return CustomTextButton(
+                              onPressed: emailValid &&
+                                      countryValid &&
+                                      cityValid &&
+                                      stateValid &&
+                                      zipValid &&
+                                      phoneValid &&
+                                      emailValid &&
+                                      ((firstNameValid && lastNameValid) || companyNameValid) &&
+                                      state.firstAddressValid &&
+                                      (state.secondAddressValid || _secondAddressController.text.isEmpty)
+                                  ? () => context.read<FormBloc>().add(const FormEvent.submit())
+                                  : null,
+                              text: 'Create address',
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 32),
-                  ],
+                      const SizedBox(height: 32),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
