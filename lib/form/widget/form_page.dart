@@ -45,6 +45,26 @@ class _FormPageState extends State<FormPage> {
     super.dispose();
   }
 
+  bool get emailValid => (_emailController.text.isNotEmpty && _emailController.text.length >= 5);
+
+  bool get addressNameValid => (_addressNameController.text.isNotEmpty && _addressNameController.text.length >= 5);
+
+  bool get firstNameValid => (_firstNameController.text.isNotEmpty && _firstNameController.text.length >= 5);
+
+  bool get lastNameValid => (_lastNameController.text.isNotEmpty && _lastNameController.text.length >= 5);
+
+  bool get companyNameValid => (_companyNameController.text.isNotEmpty && _companyNameController.text.length >= 5);
+
+  bool get countryValid => (_countryController.text.isNotEmpty && _countryController.text.length >= 5);
+
+  bool get cityValid => (_cityController.text.isNotEmpty && _cityController.text.length >= 5);
+
+  bool get stateValid => (_stateController.text.isNotEmpty && _stateController.text.length == 2);
+
+  bool get zipValid => (_zipController.text.isNotEmpty && _zipController.text.length == 2);
+
+  bool get phoneValid => (_phoneController.text.isNotEmpty && _phoneController.text.length >= 5);
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -116,8 +136,9 @@ class _FormPageState extends State<FormPage> {
                         text: 'Address Name',
                         controller: _addressNameController,
                         isRequired: true,
+                        onChange: (value) => setState(() {}),
                         textInputAction: TextInputAction.next,
-                        haveError: _addressNameController.text.length < 3,
+                        haveError: _addressNameController.text.isNotEmpty && _addressNameController.text.length < 5,
                         errorMessage: 'Text is too short',
                       ),
                     ),
@@ -136,8 +157,9 @@ class _FormPageState extends State<FormPage> {
                                 text: 'First Name',
                                 controller: _firstNameController,
                                 isRequired: true,
+                                onChange: (value) => setState(() {}),
                                 textInputAction: TextInputAction.next,
-                                haveError: _firstNameController.text.length < 3,
+                                haveError: _firstNameController.text.isNotEmpty && _firstNameController.text.length < 5,
                                 errorMessage: 'Text is too short',
                               ),
                               const SizedBox(height: 14),
@@ -145,8 +167,9 @@ class _FormPageState extends State<FormPage> {
                                 text: 'Last Name',
                                 controller: _lastNameController,
                                 isRequired: true,
+                                onChange: (value) => setState(() {}),
                                 textInputAction: TextInputAction.next,
-                                haveError: _lastNameController.text.length < 3,
+                                haveError: _lastNameController.text.isNotEmpty && _lastNameController.text.length < 5,
                                 errorMessage: 'Text is too short',
                               ),
                               const SizedBox(height: 14),
@@ -180,8 +203,10 @@ class _FormPageState extends State<FormPage> {
                                 text: 'Company Name',
                                 controller: _companyNameController,
                                 isRequired: true,
+                                onChange: (value) => setState(() {}),
                                 textInputAction: TextInputAction.next,
-                                haveError: _companyNameController.text.length < 3,
+                                haveError:
+                                    _companyNameController.text.isNotEmpty && _companyNameController.text.length < 5,
                                 errorMessage: 'Text is too short',
                               ),
                             ],
@@ -215,7 +240,7 @@ class _FormPageState extends State<FormPage> {
                         text: 'Address 2',
                         controller: _secondAddressController,
                         textInputAction: TextInputAction.next,
-                        haveError: _secondAddressController.text.length < 3,
+                        haveError: _secondAddressController.text.length < 5,
                         errorMessage: 'Text is too short',
                       ),
                     ),
@@ -226,8 +251,9 @@ class _FormPageState extends State<FormPage> {
                         text: 'Country',
                         controller: _countryController,
                         isRequired: true,
+                        onChange: (value) => setState(() {}),
                         textInputAction: TextInputAction.next,
-                        haveError: _countryController.text.length < 3,
+                        haveError: _countryController.text.isNotEmpty && _countryController.text.length < 5,
                         errorMessage: 'Text is too short',
                       ),
                     ),
@@ -247,8 +273,9 @@ class _FormPageState extends State<FormPage> {
                         text: 'Phone',
                         controller: _phoneController,
                         isRequired: true,
+                        onChange: (value) => setState(() {}),
                         textInputAction: TextInputAction.next,
-                        haveError: _phoneController.text.length < 3,
+                        haveError: _phoneController.text.isNotEmpty && _phoneController.text.length < 5,
                         errorMessage: 'Text is too short',
                       ),
                     ),
@@ -259,8 +286,9 @@ class _FormPageState extends State<FormPage> {
                         text: 'Email',
                         controller: _emailController,
                         isRequired: true,
+                        onChange: (value) => setState(() {}),
                         textInputAction: TextInputAction.next,
-                        haveError: _emailController.text.length < 3,
+                        haveError: _emailController.text.isNotEmpty && _emailController.text.length < 5,
                         errorMessage: 'Text is too short',
                       ),
                     ),
@@ -268,7 +296,16 @@ class _FormPageState extends State<FormPage> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 28),
                       child: CustomTextButton(
-                        onPressed: () {},
+                        onPressed: emailValid &&
+                                countryValid &&
+                                cityValid &&
+                                stateValid &&
+                                zipValid &&
+                                phoneValid &&
+                                emailValid &&
+                                ((firstNameValid && lastNameValid) || companyNameValid)
+                            ? () {}
+                            : null,
                         text: 'Create address',
                       ),
                     ),
