@@ -1,14 +1,16 @@
 part of 'form_bloc.dart';
 
 @Freezed()
-class FormState with _$FormState {
-  const FormState._();
+class BossFormState with _$BossFormState {
+  const BossFormState._();
 
-  const factory FormState.idle({bool addressValid}) = _IdleState;
+  const factory BossFormState.idle({required bool addressValid}) = _IdleState;
 
-  const factory FormState.loading() = _LoadingState;
+  const factory BossFormState.submitting({required bool addressValid}) = _SubmittingState;
 
-  const factory FormState.success() = _SuccessState;
+  const factory BossFormState.processingAddress({required bool addressValid}) = _ProcessingAddressState;
 
-  const factory FormState.failure() = _FailureState;
+  const factory BossFormState.success({required bool addressValid}) = _SuccessState;
+
+  const factory BossFormState.failure({required bool addressValid}) = _FailureState;
 }

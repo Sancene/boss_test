@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:untitled/form/bloc/form_bloc.dart';
 import 'package:untitled/form/widget/form_page.dart';
 import 'package:untitled/gen/assets.gen.dart';
 import 'package:untitled/map/map_point_card.dart';
@@ -157,7 +159,10 @@ class _MapPageState extends State<MapPage> {
                             child: GestureDetector(
                               onTap: () => Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (context) => const FormPage(),
+                                  builder: (context) => BlocProvider(
+                                    create: (context) => FormBloc(),
+                                    child: const FormPage(),
+                                  ),
                                 ),
                               ),
                               child: const MapPointCard(),

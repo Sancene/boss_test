@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:untitled/form/bloc/form_bloc.dart';
 import 'package:untitled/gen/assets.gen.dart';
 import 'package:untitled/utils/colors.dart';
 import 'package:untitled/utils/theme_data.dart';
@@ -18,6 +20,7 @@ class _FormPageState extends State<FormPage> {
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _companyNameController = TextEditingController();
   final TextEditingController _firstAddressController = TextEditingController();
+  final TextEditingController _secondAddressController = TextEditingController();
   final TextEditingController _countryController = TextEditingController();
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _stateController = TextEditingController();
@@ -38,6 +41,7 @@ class _FormPageState extends State<FormPage> {
     _zipController.dispose();
     _phoneController.dispose();
     _emailController.dispose();
+    _secondAddressController.dispose();
     super.dispose();
   }
 
@@ -77,6 +81,34 @@ class _FormPageState extends State<FormPage> {
                 child: ListView(
                   shrinkWrap: true,
                   children: [
+                    const SizedBox(height: 29),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 28),
+                      child: RichText(
+                        text: const TextSpan(
+                          text: '*',
+                          children: [
+                            TextSpan(
+                              text: ' — Fields obligatory for filling',
+                              style: TextStyle(
+                                fontFamily: "Arial",
+                                fontSize: 18,
+                                fontWeight: FontWeight.w400,
+                                height: 1,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                          style: TextStyle(
+                            fontFamily: "Arial",
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                            color: AppColors.primaryRed,
+                            height: 1,
+                          ),
+                        ),
+                      ),
+                    ),
                     const SizedBox(height: 24),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 28),
@@ -85,6 +117,8 @@ class _FormPageState extends State<FormPage> {
                         controller: _addressNameController,
                         isRequired: true,
                         textInputAction: TextInputAction.next,
+                        haveError: _addressNameController.text.length < 3,
+                        errorMessage: 'Text is too short',
                       ),
                     ),
                     const SizedBox(height: 14),
@@ -103,6 +137,8 @@ class _FormPageState extends State<FormPage> {
                                 controller: _firstNameController,
                                 isRequired: true,
                                 textInputAction: TextInputAction.next,
+                                haveError: _firstNameController.text.length < 3,
+                                errorMessage: 'Text is too short',
                               ),
                               const SizedBox(height: 14),
                               TextFieldWithTitle(
@@ -110,6 +146,8 @@ class _FormPageState extends State<FormPage> {
                                 controller: _lastNameController,
                                 isRequired: true,
                                 textInputAction: TextInputAction.next,
+                                haveError: _lastNameController.text.length < 3,
+                                errorMessage: 'Text is too short',
                               ),
                               const SizedBox(height: 14),
                               Row(
@@ -143,6 +181,8 @@ class _FormPageState extends State<FormPage> {
                                 controller: _companyNameController,
                                 isRequired: true,
                                 textInputAction: TextInputAction.next,
+                                haveError: _companyNameController.text.length < 3,
+                                errorMessage: 'Text is too short',
                               ),
                             ],
                           ),
@@ -152,11 +192,31 @@ class _FormPageState extends State<FormPage> {
                     const SizedBox(height: 14),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 28),
+                      child: BlocBuilder<FormBloc, BossFormState>(
+                        builder: (context, state) {
+                          return TextFieldWithTitle(
+                            text: 'Address 1',
+                            controller: _firstAddressController,
+                            isRequired: true,
+                            textInputAction: TextInputAction.next,
+                            onEditingComplete: () {
+                              context.read<FormBloc>().add(FormEvent.validateAddress(_firstAddressController.text));
+                            },
+                            errorMessage: 'Address is invalid',
+                            haveError: !state.addressValid,
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 28),
                       child: TextFieldWithTitle(
-                        text: 'Address 1',
-                        controller: _firstAddressController,
-                        isRequired: true,
+                        text: 'Address 2',
+                        controller: _secondAddressController,
                         textInputAction: TextInputAction.next,
+                        haveError: _secondAddressController.text.length < 3,
+                        errorMessage: 'Text is too short',
                       ),
                     ),
                     const SizedBox(height: 14),
@@ -167,6 +227,8 @@ class _FormPageState extends State<FormPage> {
                         controller: _countryController,
                         isRequired: true,
                         textInputAction: TextInputAction.next,
+                        haveError: _countryController.text.length < 3,
+                        errorMessage: 'Text is too short',
                       ),
                     ),
                     const SizedBox(height: 14),
@@ -186,6 +248,8 @@ class _FormPageState extends State<FormPage> {
                         controller: _phoneController,
                         isRequired: true,
                         textInputAction: TextInputAction.next,
+                        haveError: _phoneController.text.length < 3,
+                        errorMessage: 'Text is too short',
                       ),
                     ),
                     const SizedBox(height: 14),
@@ -196,6 +260,8 @@ class _FormPageState extends State<FormPage> {
                         controller: _emailController,
                         isRequired: true,
                         textInputAction: TextInputAction.next,
+                        haveError: _emailController.text.length < 3,
+                        errorMessage: 'Text is too short',
                       ),
                     ),
                     const SizedBox(height: 48),

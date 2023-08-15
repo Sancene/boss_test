@@ -14,6 +14,7 @@ class TextFieldWithTitle extends StatelessWidget {
     this.errorMessage,
     this.maxLength,
     this.textInputAction,
+    this.onEditingComplete,
     super.key,
   });
 
@@ -24,6 +25,7 @@ class TextFieldWithTitle extends StatelessWidget {
   final bool isRequired;
   final bool isBold;
   final ValueChanged<String>? onChange;
+  final VoidCallback? onEditingComplete;
   final bool haveError;
   final String? errorMessage;
   final int? maxLength;
@@ -54,7 +56,7 @@ class TextFieldWithTitle extends StatelessWidget {
         DecoratedBox(
           decoration: BoxDecoration(
             color: const Color.fromRGBO(241, 249, 255, 1),
-            border: Border.all(color: haveError ? AppColors.primaryRed : Colors.black),
+            border: Border.all(color: haveError ? Colors.red : Colors.black),
           ),
           child: Padding(
             padding: const EdgeInsets.all(2),
@@ -65,6 +67,7 @@ class TextFieldWithTitle extends StatelessWidget {
               controller: controller,
               keyboardType: keyboardType,
               textInputAction: textInputAction,
+              onEditingComplete: onEditingComplete,
               decoration: const InputDecoration(
                 counterText: '',
                 contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
