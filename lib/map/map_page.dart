@@ -133,39 +133,30 @@ class _MapPageState extends State<MapPage> {
                 padding: const EdgeInsets.only(bottom: 32),
                 child: SizedBox(
                   height: 270,
-                  child: PageView(
+                  child: PageView.builder(
                     onPageChanged: (value) {
-                      if(_isPageViewAnimating) {
+                      if (_isPageViewAnimating) {
                         return;
                       }
                       selectedItem.value = value;
                     },
                     controller: _pageController,
                     clipBehavior: Clip.none,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 16),
-                        child: GestureDetector(
-                          onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => BlocProvider(
-                                create: (context) => FormBloc(),
-                                child: const FormPage(),
-                              ),
+                    itemCount: _mapObjects.length,
+                    itemBuilder: (context, index) => Padding(
+                      padding: const EdgeInsets.only(right: 16),
+                      child: GestureDetector(
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => BlocProvider(
+                              create: (context) => FormBloc(),
+                              child: const FormPage(),
                             ),
                           ),
-                          child: const MapPointCard(),
                         ),
+                        child: const MapPointCard(),
                       ),
-                      const Padding(
-                        padding: EdgeInsets.only(right: 16),
-                        child: MapPointCard(),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.only(right: 16),
-                        child: MapPointCard(),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
