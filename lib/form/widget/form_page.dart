@@ -61,7 +61,7 @@ class _FormPageState extends State<FormPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () => Navigator.of(context).pop(),
                       icon: const Icon(
                         Icons.keyboard_backspace_sharp,
                         color: Colors.white,
