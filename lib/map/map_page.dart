@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -17,17 +18,36 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   late YandexMapController _controller;
-  late final PageController _pageController = PageController(viewportFraction: 0.9);
+  late final PageController _pageController =
+  PageController(viewportFraction: 0.9);
 
-  final _mapObjects = [
+  late ValueNotifier<int> selectedItem = ValueNotifier(-1)..addListener(() {
+    _pageController.animateToPage(selectedItem.value, duration: const Duration(milliseconds: 500), curve: Curves.linear);
+    _controller.moveCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: Point(
+            latitude: _mapObjects[selectedItem.value].point.latitude,
+            longitude: _mapObjects[selectedItem.value].point.longitude,
+          ),
+        ),
+      ),
+      animation: const MapAnimation(duration: 1),
+    );
+  });
+
+  late final _mapObjects = [
     PlacemarkMapObject(
       mapId: const MapObjectId('1'),
       point: const Point(latitude: 59.945933, longitude: 30.320045),
       opacity: 0.7,
       direction: 90,
+      onTap: (mapObject, point) => selectedItem.value = 0,
       icon: PlacemarkIcon.single(
         PlacemarkIconStyle(
-            image: BitmapDescriptor.fromAssetImage(Assets.images.point.path), rotationType: RotationType.noRotation),
+          image: BitmapDescriptor.fromAssetImage(Assets.images.point.path),
+          rotationType: RotationType.noRotation,
+        ),
       ),
     ),
     PlacemarkMapObject(
@@ -35,9 +55,12 @@ class _MapPageState extends State<MapPage> {
       point: const Point(latitude: 60, longitude: 31),
       opacity: 0.7,
       direction: 90,
+      onTap: (mapObject, point) => selectedItem.value = 1,
       icon: PlacemarkIcon.single(
         PlacemarkIconStyle(
-            image: BitmapDescriptor.fromAssetImage(Assets.images.point.path), rotationType: RotationType.noRotation),
+          image: BitmapDescriptor.fromAssetImage(Assets.images.point.path),
+          rotationType: RotationType.noRotation,
+        ),
       ),
     ),
     PlacemarkMapObject(
@@ -45,9 +68,12 @@ class _MapPageState extends State<MapPage> {
       point: const Point(latitude: 60.5, longitude: 30.5),
       opacity: 0.7,
       direction: 90,
+      onTap: (mapObject, point) => selectedItem.value = 2,
       icon: PlacemarkIcon.single(
         PlacemarkIconStyle(
-            image: BitmapDescriptor.fromAssetImage(Assets.images.point.path), rotationType: RotationType.noRotation),
+          image: BitmapDescriptor.fromAssetImage(Assets.images.point.path),
+          rotationType: RotationType.noRotation,
+        ),
       ),
     ),
   ];
@@ -94,16 +120,7 @@ class _MapPageState extends State<MapPage> {
               rotateGesturesEnabled: false,
               onMapCreated: (controller) {
                 _controller = controller;
-                _controller.moveCamera(
-                  CameraUpdate.newCameraPosition(
-                    CameraPosition(
-                      target: Point(
-                        latitude: _mapObjects.first.point.latitude,
-                        longitude: _mapObjects.first.point.longitude,
-                      ),
-                    ),
-                  ),
-                );
+                selectedItem.value = 0;
               },
               mapObjects: _mapObjects,
             ),
@@ -111,121 +128,45 @@ class _MapPageState extends State<MapPage> {
               alignment: Alignment.bottomCenter,
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 32),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(
-                      height: 40,
-                      child: ListView(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        scrollDirection: Axis.horizontal,
-                        shrinkWrap: true,
-                        clipBehavior: Clip.none,
-                        children: const [
-                          _MapButton(text: 'Drive'),
-                          SizedBox(width: 16),
-                          _MapButton(text: 'Truckee, CA', isSelected: true),
-                          SizedBox(width: 16),
-                          _MapButton(text: 'Details'),
-                          SizedBox(width: 16),
-                          _MapButton(text: 'Something else'),
-                          SizedBox(width: 16),
-                          _MapButton(text: 'Something else 2'),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 19),
-                    SizedBox(
-                      height: 210,
-                      child: PageView(
-                        onPageChanged: (value) {
-                          _controller.moveCamera(
-                            CameraUpdate.newCameraPosition(
-                              CameraPosition(
-                                target: Point(
-                                  latitude: _mapObjects[value].point.latitude,
-                                  longitude: _mapObjects[value].point.longitude,
-                                ),
-                              ),
-                            ),
-                            animation: const MapAnimation(duration: 1),
-                          );
-                        },
-                        controller: _pageController,
-                        clipBehavior: Clip.none,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(right: 16),
-                            child: GestureDetector(
-                              onTap: () => Navigator.of(context).push(
+                child: SizedBox(
+                  height: 270,
+                  child: PageView(
+                    onPageChanged: (value) {
+                      selectedItem.value = value;
+                    },
+                    controller: _pageController,
+                    clipBehavior: Clip.none,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 16),
+                        child: GestureDetector(
+                          onTap: () =>
+                              Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (context) => BlocProvider(
-                                    create: (context) => FormBloc(),
-                                    child: const FormPage(),
-                                  ),
+                                  builder: (context) =>
+                                      BlocProvider(
+                                        create: (context) => FormBloc(),
+                                        child: const FormPage(),
+                                      ),
                                 ),
                               ),
-                              child: const MapPointCard(),
-                            ),
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.only(right: 16),
-                            child: MapPointCard(),
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.only(right: 16),
-                            child: MapPointCard(),
-                          ),
-                        ],
+                          child: const MapPointCard(),
+                        ),
                       ),
-                    ),
-                  ],
+                      const Padding(
+                        padding: EdgeInsets.only(right: 16),
+                        child: MapPointCard(),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.only(right: 16),
+                        child: MapPointCard(),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _MapButton extends StatelessWidget {
-  const _MapButton({
-    required this.text,
-    this.isSelected = false,
-    super.key,
-  });
-
-  final String text;
-  final bool isSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: isSelected ? Colors.white : AppColors.primaryRed,
-        borderRadius: BorderRadius.circular(4),
-        boxShadow: [
-          BoxShadow(
-            offset: const Offset(0, 4),
-            blurRadius: 10,
-            spreadRadius: 0,
-            color: Colors.black.withOpacity(0.2625),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16 + (isSelected ? 32 : 0), vertical: 10),
-        child: Text(
-          text,
-          style: TextStyle(
-            fontFamily: "Arial",
-            fontSize: 12,
-            fontWeight: FontWeight.w400,
-            color: isSelected ? Colors.black : Colors.white,
-            height: 1.5,
-          ),
         ),
       ),
     );
