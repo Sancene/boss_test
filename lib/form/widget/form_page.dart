@@ -4,6 +4,7 @@ import 'package:untitled/form/bloc/form_bloc.dart';
 import 'package:untitled/form/widget/fullscreen_loader.dart';
 import 'package:untitled/gen/assets.gen.dart';
 import 'package:untitled/utils/colors.dart';
+import 'package:untitled/utils/formatters.dart';
 import 'package:untitled/utils/theme_data.dart';
 import 'package:untitled/widget/elevated_button.dart';
 import 'package:untitled/widget/textfield_with_title.dart';
@@ -46,7 +47,11 @@ class _FormPageState extends State<FormPage> {
     super.dispose();
   }
 
-  bool get emailValid => (_emailController.text.isNotEmpty && _emailController.text.length >= 5);
+  final _countryCodes = ['+7', '+8', '+9', '+1'];
+
+  bool get emailValid => (_emailController.text.isNotEmpty &&
+      _emailController.text.length >= 5 &&
+      RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(_emailController.text));
 
   bool get addressNameValid => (_addressNameController.text.isNotEmpty && _addressNameController.text.length >= 5);
 
@@ -64,7 +69,7 @@ class _FormPageState extends State<FormPage> {
 
   bool get zipValid => (_zipController.text.isNotEmpty && _zipController.text.length == 2);
 
-  bool get phoneValid => (_phoneController.text.isNotEmpty && _phoneController.text.length >= 5);
+  bool get phoneValid => (_phoneController.text.isNotEmpty && _phoneController.text.length >= 13);
 
   @override
   Widget build(BuildContext context) {
@@ -271,8 +276,8 @@ class _FormPageState extends State<FormPage> {
                                       fontFamily: "Arial",
                                       fontSize: 14,
                                       fontWeight: FontWeight.w400,
-                                      color: Color(0xff32aa1d),
-                                      height: 14 / 14,
+                                      color: AppColors.primaryGreen,
+                                      height: 1,
                                     ),
                                   ),
                                 ],
@@ -320,8 +325,8 @@ class _FormPageState extends State<FormPage> {
                                       fontFamily: "Arial",
                                       fontSize: 14,
                                       fontWeight: FontWeight.w400,
-                                      color: Color(0xff32aa1d),
-                                      height: 14 / 14,
+                                      color: AppColors.primaryGreen,
+                                      height: 1,
                                     ),
                                   ),
                                 ],
@@ -359,14 +364,50 @@ class _FormPageState extends State<FormPage> {
                       const SizedBox(height: 14),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 28),
-                        child: TextFieldWithTitle(
-                          text: 'Phone',
-                          controller: _phoneController,
-                          isRequired: true,
-                          onChange: (value) => setState(() {}),
-                          textInputAction: TextInputAction.next,
-                          haveError: _phoneController.text.isNotEmpty && !phoneValid,
-                          errorMessage: 'Text is too short',
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(top: 18),
+                              child: DropdownMenu<String>(
+                                initialSelection: _countryCodes.first,
+                                inputDecorationTheme: InputDecorationTheme(
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(0),
+                                  ),
+                                  filled: true,
+                                  fillColor: AppColors.textFieldBackground,
+                                ),
+                                dropdownMenuEntries: [
+                                  for (final code in _countryCodes)
+                                    DropdownMenuEntry(
+                                      value: code,
+                                      label: code,
+                                      style: ButtonStyle(
+                                        backgroundColor: MaterialStateProperty.resolveWith((states) => AppColors.textFieldBackground),
+                                        surfaceTintColor: MaterialStateProperty.resolveWith((states) => AppColors.textFieldBackground),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 7),
+                            Expanded(
+                              child: TextFieldWithTitle(
+                                text: 'Phone',
+                                controller: _phoneController,
+                                isRequired: true,
+                                onChange: (value) => setState(() {}),
+                                inputFormatters: [
+                                  MaskedTextInputFormatter(mask: 'xxx xxx xx xx', separator: ' '),
+                                ],
+                                textInputAction: TextInputAction.next,
+                                keyboardType: TextInputType.number,
+                                haveError: _phoneController.text.isNotEmpty && !phoneValid,
+                                errorMessage: 'Text is too short',
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       const SizedBox(height: 14),
@@ -377,7 +418,7 @@ class _FormPageState extends State<FormPage> {
                           controller: _emailController,
                           isRequired: true,
                           onChange: (value) => setState(() {}),
-                          textInputAction: TextInputAction.next,
+                          textInputAction: TextInputAction.done,
                           haveError: _emailController.text.isNotEmpty && !emailValid,
                           errorMessage: 'Text is too short',
                         ),

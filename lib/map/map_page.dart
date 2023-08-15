@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -18,23 +17,27 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   late YandexMapController _controller;
-  late final PageController _pageController =
-  PageController(viewportFraction: 0.9);
+  late final PageController _pageController = PageController(viewportFraction: 0.9);
+  bool _isPageViewAnimating = false;
 
-  late ValueNotifier<int> selectedItem = ValueNotifier(-1)..addListener(() {
-    _pageController.animateToPage(selectedItem.value, duration: const Duration(milliseconds: 500), curve: Curves.linear);
-    _controller.moveCamera(
-      CameraUpdate.newCameraPosition(
-        CameraPosition(
-          target: Point(
-            latitude: _mapObjects[selectedItem.value].point.latitude,
-            longitude: _mapObjects[selectedItem.value].point.longitude,
+  late ValueNotifier<int> selectedItem = ValueNotifier(-1)
+    ..addListener(() {
+      _isPageViewAnimating = true;
+      _pageController
+          .animateToPage(selectedItem.value, duration: const Duration(milliseconds: 500), curve: Curves.linear)
+          .then((value) => _isPageViewAnimating = false);
+      _controller.moveCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: Point(
+              latitude: _mapObjects[selectedItem.value].point.latitude,
+              longitude: _mapObjects[selectedItem.value].point.longitude,
+            ),
           ),
         ),
-      ),
-      animation: const MapAnimation(duration: 1),
-    );
-  });
+        animation: const MapAnimation(duration: 1),
+      );
+    });
 
   late final _mapObjects = [
     PlacemarkMapObject(
@@ -132,6 +135,9 @@ class _MapPageState extends State<MapPage> {
                   height: 270,
                   child: PageView(
                     onPageChanged: (value) {
+                      if(_isPageViewAnimating) {
+                        return;
+                      }
                       selectedItem.value = value;
                     },
                     controller: _pageController,
@@ -140,16 +146,14 @@ class _MapPageState extends State<MapPage> {
                       Padding(
                         padding: const EdgeInsets.only(right: 16),
                         child: GestureDetector(
-                          onTap: () =>
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      BlocProvider(
-                                        create: (context) => FormBloc(),
-                                        child: const FormPage(),
-                                      ),
-                                ),
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => BlocProvider(
+                                create: (context) => FormBloc(),
+                                child: const FormPage(),
                               ),
+                            ),
+                          ),
                           child: const MapPointCard(),
                         ),
                       ),

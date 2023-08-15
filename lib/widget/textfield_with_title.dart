@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:untitled/utils/colors.dart';
 
 class TextFieldWithTitle extends StatelessWidget {
@@ -15,6 +16,7 @@ class TextFieldWithTitle extends StatelessWidget {
     this.maxLength,
     this.textInputAction,
     this.onEditingComplete,
+    this.inputFormatters,
     super.key,
   });
 
@@ -30,6 +32,7 @@ class TextFieldWithTitle extends StatelessWidget {
   final String? errorMessage;
   final int? maxLength;
   final TextInputAction? textInputAction;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +58,7 @@ class TextFieldWithTitle extends StatelessWidget {
         const SizedBox(height: 5),
         DecoratedBox(
           decoration: BoxDecoration(
-            color: const Color.fromRGBO(241, 249, 255, 1),
+            color: AppColors.textFieldBackground,
             border: Border.all(color: haveError ? Colors.red : Colors.black),
           ),
           child: Padding(
@@ -67,6 +70,7 @@ class TextFieldWithTitle extends StatelessWidget {
               controller: controller,
               keyboardType: keyboardType,
               textInputAction: textInputAction,
+              inputFormatters: inputFormatters,
               onEditingComplete: onEditingComplete,
               decoration: const InputDecoration(
                 counterText: '',
