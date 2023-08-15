@@ -76,7 +76,7 @@ class TextFieldWithTitle extends StatelessWidget {
             ),
           ),
         ),
-        if (haveError) ...[
+        if (haveError && errorMessage != null && errorMessage != '') ...[
           const SizedBox(height: 8),
           Text(
             errorMessage ?? '',

@@ -159,7 +159,7 @@ class _FormPageState extends State<FormPage> {
                                 isRequired: true,
                                 onChange: (value) => setState(() {}),
                                 textInputAction: TextInputAction.next,
-                                haveError: _firstNameController.text.isNotEmpty&& !firstNameValid,
+                                haveError: _firstNameController.text.isNotEmpty && !firstNameValid,
                                 errorMessage: 'Text is too short',
                               ),
                               const SizedBox(height: 14),
@@ -205,8 +205,7 @@ class _FormPageState extends State<FormPage> {
                                 isRequired: true,
                                 onChange: (value) => setState(() {}),
                                 textInputAction: TextInputAction.next,
-                                haveError:
-                                    _companyNameController.text.isNotEmpty && !companyNameValid,
+                                haveError: _companyNameController.text.isNotEmpty && !companyNameValid,
                                 errorMessage: 'Text is too short',
                               ),
                             ],
@@ -264,6 +263,10 @@ class _FormPageState extends State<FormPage> {
                         cityController: _cityController,
                         stateController: _stateController,
                         zipController: _zipController,
+                        cityValid: cityValid,
+                        zipValid: zipValid,
+                        stateValid: stateValid,
+                        onChange: () => setState(() {}),
                       ),
                     ),
                     const SizedBox(height: 14),
@@ -326,12 +329,20 @@ class CityInfo extends StatelessWidget {
     required this.cityController,
     required this.stateController,
     required this.zipController,
+    required this.cityValid,
+    required this.stateValid,
+    required this.zipValid,
+    required this.onChange,
     super.key,
   });
 
   final TextEditingController cityController;
   final TextEditingController stateController;
   final TextEditingController zipController;
+  final VoidCallback onChange;
+  final bool cityValid;
+  final bool stateValid;
+  final bool zipValid;
 
   @override
   Widget build(BuildContext context) {
@@ -343,7 +354,9 @@ class CityInfo extends StatelessWidget {
             text: 'City',
             controller: cityController,
             isRequired: true,
+            onChange: (value) => onChange.call(),
             textInputAction: TextInputAction.next,
+            haveError: cityController.text.isNotEmpty && !cityValid,
           ),
         ),
         const SizedBox(width: 8),
@@ -353,8 +366,10 @@ class CityInfo extends StatelessWidget {
             text: 'State',
             controller: stateController,
             isRequired: true,
+            onChange: (value) => onChange.call(),
             maxLength: 2,
             textInputAction: TextInputAction.next,
+            haveError: stateController.text.isNotEmpty && !stateValid,
           ),
         ),
         const SizedBox(width: 8),
@@ -365,8 +380,10 @@ class CityInfo extends StatelessWidget {
             keyboardType: TextInputType.number,
             text: 'Zip',
             controller: zipController,
+            onChange: (value) => onChange.call(),
             isRequired: true,
             textInputAction: TextInputAction.next,
+            haveError: zipController.text.isNotEmpty && !zipValid,
           ),
         ),
       ],
