@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:untitled/form/bloc/form_bloc.dart';
+import 'package:untitled/form/model/validator.dart';
 import 'package:untitled/form/widget/fullscreen_loader.dart';
 import 'package:untitled/gen/assets.gen.dart';
 import 'package:untitled/utils/colors.dart';
@@ -53,7 +54,7 @@ class _FormPageState extends State<FormPage> {
       _emailController.text.length >= 5 &&
       RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(_emailController.text));
 
-  bool get addressNameValid => (_addressNameController.text.isNotEmpty && _addressNameController.text.length >= 5);
+  bool get addressNameValid => (_addressNameController.text.isNotEmpty && _addressError == null);
 
   bool get firstNameValid => (_firstNameController.text.isNotEmpty && _firstNameController.text.length >= 5);
 
@@ -70,6 +71,8 @@ class _FormPageState extends State<FormPage> {
   bool get zipValid => (_zipController.text.isNotEmpty && _zipController.text.length == 2);
 
   bool get phoneValid => (_phoneController.text.isNotEmpty && _phoneController.text.length >= 13);
+
+  String? _addressError;
 
   @override
   Widget build(BuildContext context) {
@@ -160,10 +163,12 @@ class _FormPageState extends State<FormPage> {
                           text: 'Address Name',
                           controller: _addressNameController,
                           isRequired: true,
-                          onChange: (value) => setState(() {}),
+                          onChange: (value) => setState(() {
+                            _addressError = Validator.addressValidator(value);
+                          }),
                           textInputAction: TextInputAction.next,
-                          haveError: _addressNameController.text.isNotEmpty && !addressNameValid,
-                          errorMessage: 'Text is too short',
+                          haveError: _addressNameController.text.isNotEmpty && _addressError != null,
+                          errorMessage: _addressError,
                         ),
                       ),
                       const SizedBox(height: 14),
@@ -384,8 +389,10 @@ class _FormPageState extends State<FormPage> {
                                       value: code,
                                       label: code,
                                       style: ButtonStyle(
-                                        backgroundColor: MaterialStateProperty.resolveWith((states) => AppColors.textFieldBackground),
-                                        surfaceTintColor: MaterialStateProperty.resolveWith((states) => AppColors.textFieldBackground),
+                                        backgroundColor: MaterialStateProperty.resolveWith(
+                                            (states) => AppColors.textFieldBackground),
+                                        surfaceTintColor: MaterialStateProperty.resolveWith(
+                                            (states) => AppColors.textFieldBackground),
                                       ),
                                     ),
                                 ],
@@ -429,7 +436,7 @@ class _FormPageState extends State<FormPage> {
                         child: BlocBuilder<FormBloc, BossFormState>(
                           builder: (context, state) {
                             return CustomTextButton(
-                              onPressed: emailValid &&
+                              onPressed: addressNameValid &&
                                       countryValid &&
                                       cityValid &&
                                       stateValid &&
