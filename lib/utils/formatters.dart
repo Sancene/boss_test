@@ -7,10 +7,7 @@ class MaskedTextInputFormatter extends TextInputFormatter {
   MaskedTextInputFormatter({
     required this.mask,
     required this.separator,
-  }) {
-    assert(mask != null);
-    assert(separator != null);
-  }
+  });
 
   @override
   TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
