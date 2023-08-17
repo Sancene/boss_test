@@ -52,6 +52,15 @@ class _MapPageState extends State<MapPage> {
           rotationType: RotationType.noRotation,
         ),
       ),
+      text: const PlacemarkText(
+        text: '1',
+        style: PlacemarkTextStyle(
+          offsetFromIcon: false,
+          placement: TextStylePlacement.top,
+          offset: -4,
+          size: 12,
+        ),
+      ),
     ),
     PlacemarkMapObject(
       mapId: const MapObjectId('2'),
@@ -65,6 +74,15 @@ class _MapPageState extends State<MapPage> {
           rotationType: RotationType.noRotation,
         ),
       ),
+      text: const PlacemarkText(
+        text: '2',
+        style: PlacemarkTextStyle(
+          offsetFromIcon: false,
+          placement: TextStylePlacement.top,
+          offset: -4,
+          size: 12,
+        ),
+      ),
     ),
     PlacemarkMapObject(
       mapId: const MapObjectId('3'),
@@ -76,6 +94,15 @@ class _MapPageState extends State<MapPage> {
         PlacemarkIconStyle(
           image: BitmapDescriptor.fromAssetImage(Assets.images.point.path),
           rotationType: RotationType.noRotation,
+        ),
+      ),
+      text: const PlacemarkText(
+        text: '3',
+        style: PlacemarkTextStyle(
+          offsetFromIcon: false,
+          placement: TextStylePlacement.top,
+          offset: -4,
+          size: 12,
         ),
       ),
     ),
@@ -154,7 +181,7 @@ class _MapPageState extends State<MapPage> {
                             ),
                           ),
                         ),
-                        child: const MapPointCard(),
+                        child: MapPointCard(id: (index + 1).toString()),
                       ),
                     ),
                   ),

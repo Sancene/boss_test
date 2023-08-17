@@ -4,7 +4,9 @@ import 'package:untitled/gen/assets.gen.dart';
 import 'package:untitled/utils/colors.dart';
 
 class MapPointCard extends StatelessWidget {
-  const MapPointCard({Key? key}) : super(key: key);
+  const MapPointCard({Key? key, required this.id}) : super(key: key);
+
+  final String id;
 
   @override
   Widget build(BuildContext context) {
@@ -46,9 +48,9 @@ class MapPointCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Row(
+                Row(
                   children: [
-                    Expanded(
+                    const Expanded(
                       child: Text(
                         'Truckee Office BOSS',
                         style: TextStyle(
@@ -61,8 +63,8 @@ class MapPointCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '1',
-                      style: TextStyle(
+                      id,
+                      style: const TextStyle(
                         fontFamily: "Arial",
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
